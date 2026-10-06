@@ -11,15 +11,42 @@ const PEOPLE = [
   ['Dwayne Johnson',['dwayne johnson','the rock']],['Ryan Reynolds',['ryan reynolds']],['Gordon Ramsay',['gordon ramsay']]
 ];
 const QUERIES = [
-  'celebrity (bought OR purchased OR acquired) (mansion OR house OR home OR car OR jet OR plane OR yacht OR watch) (million OR thousand OR dollars OR $)',
-  'celebrity (bet OR wager OR gambling) (million OR thousand OR dollars OR $)',
-  'influencer (bought OR purchased OR spent OR invested OR bet) (million OR thousand OR dollars OR $)',
-  'athlete (bought OR purchased OR invested OR bet OR wager) (million OR thousand OR dollars OR $)',
-  'rapper OR musician (bought OR purchased OR spent OR bet OR wager) (million OR thousand OR dollars OR $)',
-  'YouTuber OR streamer (bought OR purchased OR spent OR bet OR wager) (million OR thousand OR dollars OR $)',
-  'Ben Affleck house OR mansion OR property money', 'SteveWillDoIt bet OR wager money',
-  'Kylie Jenner jet OR plane OR house money', 'MrBeast spent OR bought OR investment money'
-];
+  '"Ben Affleck" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"SteveWillDoIt" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Kylie Jenner" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Drake" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"MrBeast" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Travis Scott" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"LeBron James" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Kim Kardashian" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Cristiano Ronaldo" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Jake Paul" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Taylor Swift" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Kai Cenat" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Logan Paul" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Elon Musk" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Tom Brady" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Conor McGregor" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Kevin Hart" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Floyd Mayweather" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Lionel Messi" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Justin Bieber" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Beyoncé" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Jay-Z" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Rihanna" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Selena Gomez" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Post Malone" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Bad Bunny" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Neymar" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Patrick Mahomes" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Stephen Curry" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Travis Kelce" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Tom Holland" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Zendaya" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Dwayne Johnson" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Ryan Reynolds" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d',
+  '"Gordon Ramsay" (bought OR purchased OR spent OR bet OR wager OR mansion OR house OR car OR jet OR yacht OR watch OR investment OR deal) when:7d'
+]
 const DEMO = [
  ['Drake','D','Betting',500000,'A reported $500K sports wager is making the rounds','A high-dollar wager attributed to Drake is being discussed across sports and entertainment coverage.','Reported','Sports / entertainment coverage'],
  ['MrBeast','MB','Business',1800000,'MrBeast reveals a massive production budget','A behind-the-scenes discussion gives viewers a look at the scale of spending behind a major video.','Verified','YouTube interview'],
@@ -43,6 +70,6 @@ function moneyLabel(n){if(n>=1e9)return '$'+(n/1e9).toFixed(n%1e9?1:0)+'B';if(n>
 function category(text){const t=text.toLowerCase();if(/bet|wager|gambl/.test(t))return 'Betting';if(/mansion|house|home|real estate|property/.test(t))return 'Real Estate';if(/car|ferrari|lamborghini|porsche|rolls-royce|bugatti/.test(t))return 'Cars';if(/jet|plane|yacht|watch|jewelry|diamond/.test(t))return 'Luxury';if(/invest|stake|funding|startup/.test(t))return 'Investment';if(/contract|deal|company|business/.test(t))return 'Business';if(/creator|stream|youtube|tiktok/.test(t))return 'Creator';return 'Spending';}
 function status(){return 'Reported';}
 function id(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(16);}
-async function fetchGoogleNews(){const seen=new Map();const errors=[];for(const q of QUERIES){const url='https://news.google.com/rss/search?q='+encodeURIComponent(q+' when:2d')+'&hl=en-US&gl=US&ceid=US:en';try{const r=await fetch(url,{headers:{'user-agent':'Mozilla/5.0 PocketWatch/0.4'}});if(!r.ok){errors.push('HTTP '+r.status);continue;}const xml=await r.text();for(const b of blocks(xml)){const title=tag(b,'title'),desc=tag(b,'description'),published=tag(b,'pubDate')||tag(b,'published'),link=linkOf(b),text=strip(title+' '+desc),person=personFor(text),amount=amountFor(text);if(!person||!amount)continue;const key=person+'|'+amount+'|'+title.toLowerCase().replace(/[^a-z0-9 ]/g,'').slice(0,100);if(seen.has(key))continue;seen.set(key,{id:id(link||title),name:person,initials:person.split(/\s+/).map(x=>x[0]).join('').slice(0,2),cat:category(text),amount:moneyLabel(amount),amountValue:amount,title,desc:desc||title,status:status(text),source:sourceOf(b,link),sourceUrl:link,publishedAt:published||new Date().toISOString(),sourceType:'Google News RSS'});}}catch(e){errors.push(e.message||'fetch error');}}
+async function fetchGoogleNews(){const seen=new Map();const errors=[];for(const q of QUERIES){const url='https://news.google.com/rss/search?q='+encodeURIComponent(q+' when:2d')+'&hl=en-US&gl=US&ceid=US:en';try{const r=await fetch(url,{headers:{'user-agent':'Mozilla/5.0 PocketWatch/0.4'}});if(!r.ok){errors.push('HTTP '+r.status);continue;}const xml=await r.text();for(const b of blocks(xml)){const title=tag(b,'title'),desc=tag(b,'description'),published=tag(b,'pubDate')||tag(b,'published'),link=linkOf(b),text=strip(title+' '+desc),person=personFor(text),amount=amountFor(text);if(!person)continue;const key=person+'|'+amount+'|'+title.toLowerCase().replace(/[^a-z0-9 ]/g,'').slice(0,100);if(seen.has(key))continue;seen.set(key,{id:id(link||title),name:person,initials:person.split(/\s+/).map(x=>x[0]).join('').slice(0,2),cat:category(text),amount:moneyLabel(amount),amountValue:amount,title,desc:desc||title,status:amount!=null?'Reported':'Money story',source:sourceOf(b,link),sourceUrl:link,publishedAt:published||new Date().toISOString(),sourceType:'Google News RSS'});}}catch(e){errors.push(e.message||'fetch error');}}
 return {moves:[...seen.values()].sort((a,b)=>new Date(b.publishedAt)-new Date(a.publishedAt)).slice(0,100),errors};}
 export async function buildFeed(){const live=await fetchGoogleNews();const demo=DEMO.map((x,i)=>({id:'demo-'+i,name:x[0],initials:x[1],cat:x[2],amount:moneyLabel(x[3]),amountValue:x[3],title:x[4],desc:x[5],status:x[6],source:x[7],sourceUrl:'https://news.google.com/',publishedAt:new Date(Date.now()-i*3600000).toISOString(),sourceType:'Demo fallback'}));const moves=live.moves.length?live.moves:demo;return {source:live.moves.length?'Google News RSS':'Demo fallback (Google News returned no qualifying money moves)',updatedAt:new Date().toISOString(),count:moves.length,moves,liveCount:live.moves.length,errors:live.errors.slice(0,3)};}
