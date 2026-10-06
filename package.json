@@ -1,1 +1,8 @@
-{"name":"pocketwatch","private":true,"version":"1.0.0","engines":{"node":">=18"}}
+{
+  "name": "pocketwatch-vercel",
+  "version": "0.3.0",
+  "private": true,
+  "description": "PocketWatch - celebrity money moves feed using Google News RSS",
+  "scripts": {"dev": "vercel dev"},
+  "engines": {"node": ">=20"}
+}
