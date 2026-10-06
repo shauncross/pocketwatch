@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pocketwatch</title>
+<style>
+:root{--bg:#eef1f4;--panel:#fff;--ink:#14202b;--mute:#5d6b78;--line:#d5dbe1;--acc:#2447d9;--buy:#1f8a5b;--bet:#c27a00;--inv:#2447d9;--say:#8a3fb0}
+@media(prefers-color-scheme:dark){:root{--bg:#10171e;--panel:#17212b;--ink:#e8edf2;--mute:#92a1af;--line:#2a3846;--acc:#7c97ff;--buy:#4cc38a;--bet:#f0b034;--inv:#7c97ff;--say:#c58be6}}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 Georgia,"Times New Roman",serif;padding-top:env(safe-area-inset-top,0)}
+.w{max-width:640px;margin:0 auto;padding:16px 14px 60px}
+h1{font:700 30px/1 system-ui,sans-serif;letter-spacing:-.02em;margin:6px 0 12px}
+.ui,button,input{font:14px system-ui,sans-serif;color:var(--ink)}
+input{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:9px 10px;min-width:0}
+button{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 12px;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.add{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.add input:first-child{flex:2 1 160px}.add input:nth-child(2){flex:1 1 120px}
+.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+.bar{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pill{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:3px 4px 3px 10px;font:13px system-ui,sans-serif}
+.pill button{border:0;background:none;padding:0 6px;font-size:16px;line-height:1}
+.post{display:flex;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0}
+.av{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font:700 15px system-ui,sans-serif}
+.hd{font:14px system-ui,sans-serif;color:var(--mute)}.hd b{color:var(--ink)}
+.t{margin:3px 0 6px;font-size:17px;line-height:1.35}.t a{color:inherit;text-decoration:none}.t a:hover{text-decoration:underline}
+.tag{font:600 12px system-ui,sans-serif;color:var(--c)}
+.am{font:700 13px system-ui,sans-serif;margin-left:6px}
+.ft{display:flex;gap:8px;align-items:center}.ft button{padding:3px 10px;font-size:13px}
+.msg{text-align:center;color:var(--mute);padding:30px 0}.note{font:12px system-ui,sans-serif;color:var(--mute);margin-top:24px}
+</style></head><body><div class="w">
+<h1>Pocketwatch</h1>
+<form class="add" id="f"><input id="n" placeholder="Follow a person (name)" required aria-label="Name">
+<input id="y" placeholder="YouTube channel ID (optional)" aria-label="YouTube channel ID"><button class="pri">Follow</button></form>
+<div class="bar" id="pills"></div>
+<div class="bar" id="tabs"></div>
+<div id="feed" aria-live="polite"></div>
+<p class="note">Headlines are matched automatically from public feeds (Google News, YouTube) and are not verified. Amounts are taken from headlines and may be estimates. Always check the original source.</p>
+</div>
+<script>
+var TY={purchase:["Purchase","var(--buy)"],bet:["Bet","var(--bet)"],investment:["Investment","var(--inv)"],quote:["Money talk","var(--say)"]};
+function ld(k,d){try{return JSON.parse(localStorage.getItem("pw_"+k))||d}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem("pw_"+k,JSON.stringify(v))}catch(e){}}
+var follows=ld("follows",[]),saved=ld("saved",[]),items=[],tab="feed",type="all",busy=false;
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function ago(iso){var m=(Date.now()-new Date(iso))/6e4;if(m<60)return Math.max(1,Math.round(m))+"m";if(m<1440)return Math.round(m/60)+"h";return Math.round(m/1440)+"d"}
+function hue(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return"hsl("+h+",45%,40%)"}
+function ini(s){return s.split(/\s+/).slice(0,2).map(function(w){return w[0]}).join("").toUpperCase()}
+function pills(){document.getElementById("pills").innerHTML=follows.map(function(p,i){return'<span class="pill">'+esc(p.name)+'<button data-x="'+i+'" aria-label="Unfollow '+esc(p.name)+'">×</button></span>'}).join("")}
+function tabs(){var h="";[["feed","Feed"],["saved","Saved"]].forEach(function(t){h+='<button data-tab="'+t[0]+'" aria-pressed="'+(tab===t[0])+'">'+t[1]+'</button>'});
+ h+=' ';[["all","All"]].concat(Object.keys(TY).map(function(k){return[k,TY[k][0]]})).forEach(function(t){h+='<button data-type="'+t[0]+'" aria-pressed="'+(type===t[0])+'">'+t[1]+'</button>'});
+ document.getElementById("tabs").innerHTML=h}
+function render(){
+ var el=document.getElementById("feed"),src=tab==="saved"?saved:items;
+ var list=src.filter(function(i){return type==="all"||i.type===type});
+ if(tab==="feed"&&!follows.length){el.innerHTML='<div class="msg">Follow someone above to start your feed.</div>';return}
+ if(busy){el.innerHTML='<div class="msg">Loading…</div>';return}
+ if(!list.length){el.innerHTML='<div class="msg">'+(tab==="saved"?"Nothing saved yet.":"No money-related items found for the people you follow in the last 30 days.")+'</div>';return}
+ el.innerHTML=list.map(function(i){var t=TY[i.type],u=/^https?:\/\//.test(i.url)?i.url:"#",s=saved.some(function(x){return x.url===i.url});
+  return'<article class="post" style="--c:'+t[1]+'"><div class="av" style="background:'+hue(i.who)+'">'+esc(ini(i.who))+'</div><div style="min-width:0">'
+  +'<div class="hd"><b>'+esc(i.who)+'</b> · '+ago(i.date)+' · '+(i.kind==="video"?"Video":"Article")+' · '+esc(i.src)+'</div>'
+  +'<div class="t"><a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+esc(i.title)+'</a></div>'
+  +'<div class="ft"><span class="tag">'+t[0]+'</span>'+(i.amount?'<span class="am">'+esc(i.amount)+'</span>':'')
+  +'<button data-s="'+esc(i.url)+'" aria-pressed="'+s+'">'+(s?"Saved":"Save")+'</button></div></div></article>'}).join("")}
+function load(){
+ if(!follows.length){items=[];render();return}
+ busy=true;render();
+ fetch("/api/feed?f="+encodeURIComponent(JSON.stringify(follows))).then(function(r){return r.json()})
+ .then(function(d){items=d.items||[]}).catch(function(){items=[]}).then(function(){busy=false;render()})}
+document.getElementById("f").addEventListener("submit",function(e){e.preventDefault();
+ var n=document.getElementById("n").value.trim(),y=document.getElementById("y").value.trim();
+ if(n&&!follows.some(function(p){return p.name.toLowerCase()===n.toLowerCase()})){follows.push({name:n,yt:y});sv("follows",follows)}
+ e.target.reset();pills();load()});
+document.getElementById("pills").addEventListener("click",function(e){var b=e.target.closest("[data-x]");if(!b)return;
+ follows.splice(+b.dataset.x,1);sv("follows",follows);pills();load()});
+document.getElementById("tabs").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+ if(b.dataset.tab)tab=b.dataset.tab;if(b.dataset.type)type=b.dataset.type;tabs();render()});
+document.getElementById("feed").addEventListener("click",function(e){var b=e.target.closest("[data-s]");if(!b)return;
+ var u=b.dataset.s,k=saved.findIndex(function(x){return x.url===u});
+ if(k>-1)saved.splice(k,1);else{var it=items.find(function(x){return x.url===u});if(it)saved.unshift(it)}
+ sv("saved",saved);render()});
+pills();tabs();load();
+</script></body></html>
