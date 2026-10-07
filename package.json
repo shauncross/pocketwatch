@@ -1,0 +1,8 @@
+{
+  "name": "pocketwatch-vercel",
+  "version": "0.7.0",
+  "private": true,
+  "engines": {
+    "node": "24.x"
+  }
+}
