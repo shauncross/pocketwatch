@@ -33,7 +33,7 @@ footer{color:#667082;font-size:12px;padding:40px 0}.modal{position:fixed;inset:0
 <div id="status" class="status">Loading PocketWatch…</div>
 <pre id="diag" class="diag"></pre>
 <section id="feed" class="grid"></section>
-<footer>Beta feed uses public Google News RSS results when available. Stories link to their original publishers.</footer>
+<footer>Live beta feed is powered by GNews. Stories link to their original publishers. If the provider is unavailable, PocketWatch keeps the demo feed running.</footer>
 </main>
 <div id="modal" class="modal"><div class="panel"><button class="close" onclick="closeModal()">Close</button><div id="modalBody"></div></div></div>
 <script>
@@ -59,12 +59,12 @@ async function load(url="/api/feed"){
    const r=await fetch(url,{cache:"no-store"});
    const text=await r.text();
    let data; try{data=JSON.parse(text)}catch{throw new Error(`API returned non-JSON (${r.status})`)}
-   if(data.moves?.length){moves=data.moves; $("status").textContent=`${data.count} money moves · ${data.live?"Live Google News":"Demo fallback"}`}
-   else{moves=[...DEMO];$("status").textContent="Live source returned no qualifying stories — showing working demo feed."}
+   if(data.moves?.length){moves=data.moves; $("status").textContent=`${data.count} money moves · ${data.live?"Live GNews":"Demo fallback"}`}
+   else{moves=[...DEMO];$("status").textContent="Live GNews returned no qualifying stories — showing the working demo feed."}
    if(data.diagnostics){$("diag").style.display="block";$("diag").textContent=JSON.stringify(data.diagnostics,null,2)}
    render();
  }catch(e){
-   moves=[...DEMO];$("status").textContent="Live feed unavailable — PocketWatch is showing its built-in demo feed.";
+   moves=[...DEMO];$("status").textContent="Live GNews is unavailable — PocketWatch is showing its built-in demo feed.";
    $("diag").style.display="block";$("diag").textContent="API diagnostic: "+e.message;
    render();
  }

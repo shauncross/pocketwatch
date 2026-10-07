@@ -1,27 +1,16 @@
-# PocketWatch Vercel v0.7
-
-This build intentionally uses the simplest Vercel structure:
-
-- `index.html` — browser app with a built-in demo feed.
-- `api/feed.js` — single CommonJS Vercel Function; fetches Google News RSS in parallel.
-- `api/sync.js` — same feed function, used by the Sync button.
-- `api/health.js` — deployment diagnostic.
-
-## Important
-
-There is intentionally **no `vercel.json`** and no Express server. Vercel automatically detects files in `api/` as Functions.
-
-Deploy the CONTENTS of this folder at the repository root. Do not nest the project inside another folder.
-
-After deployment check:
-- `/api/health`
-- `/api/feed`
-
-Even if Google News is unavailable, the browser has a built-in demo feed and `/api/feed` returns demo data with diagnostics, so the site should never be blank.
+# PocketWatch — Live GNews Vercel build
 
 ## Deploy
+1. Upload this project to the GitHub repository connected to Vercel, or import the ZIP into a new repo.
+2. In Vercel → Project → Settings → Environment Variables add:
+   - Name: `GNEWS_API_KEY`
+   - Value: your GNews developer key
+   - Environments: Production, Preview, Development
+3. Redeploy after saving the variable.
+4. Open `/api/health` and confirm `gnewsConfigured:true`.
+5. Open the home page and click **Sync News**.
 
-1. Put `index.html`, `package.json`, and the `api` folder at the root of GitHub.
-2. Import the repository into Vercel.
-3. Use Node 24.x (the `engines` field requests it).
-4. Deploy.
+The key is only read by Vercel serverless functions. It is never included in browser JavaScript.
+
+## Important
+The GNews Free plan is intended for development/testing and has a daily request limit and delayed articles. A published commercial PocketWatch deployment requires an eligible paid GNews plan.
